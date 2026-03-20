@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liberté — Marketing que Vende</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #0099ff;
+    --blue-dim: rgba(0,153,255,0.12);
+    --black: #000000;
+    --surface: #0a0a0a;
+    --surface2: #111111;
+    --border: rgba(255,255,255,0.07);
+    --white: #ffffff;
+    --gray: #888;
+    --gray-light: #bbb;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
+
+  /* CURSOR */
+  .cursor{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference}
+  .cursor-dot{width:8px;height:8px;background:#fff;border-radius:50%;transform:translate(-50%,-50%)}
+  .cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9998;width:36px;height:36px;border:1px solid rgba(255,255,255,0.4);border-radius:50%;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s}
+  body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{width:56px;height:56px;border-color:var(--blue)}
+
+  /* NOISE */
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.025}
+
+  h1,h2,h3,h4{font-family:'Montserrat',sans-serif}
+
+  /* ── NAV ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:linear-gradient(180deg,rgba(0,0,0,0.96) 0%,transparent 100%);transition:background .3s,backdrop-filter .3s}
+  nav.scrolled{background:rgba(0,0,0,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+  .nav-logo{display:flex;align-items:center;height:40px}
+  .nav-logo img{height:36px;width:auto;display:block;object-fit:contain}
+  .nav-links{display:flex;gap:36px;list-style:none}
+  .nav-links a{color:var(--gray);font-size:14px;font-weight:500;text-decoration:none;letter-spacing:.02em;transition:color .2s}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{background:var(--blue);color:#fff;padding:10px 22px;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;font-family:'Montserrat',sans-serif;transition:opacity .2s,transform .2s}
+  .nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+
+  /* STARS */
+  .stars-canvas{position:absolute;inset:0;pointer-events:none;z-index:0;width:100%;height:100%}
+
+  /* ── HERO ── */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:140px 60px 100px;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,153,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,153,255,0.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 100% 80% at 50% 50%,black 20%,transparent 75%)}
+  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;margin:0 auto;width:100%}
+  .hero-content{text-align:left}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--blue-dim);border:1px solid rgba(0,153,255,0.25);color:var(--blue);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:32px;animation:fadeUp .8s ease both}
+  .hero-badge span{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:blink 2s ease infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .hero h1{font-size:clamp(34px,4.2vw,68px);font-weight:900;line-height:1.08;letter-spacing:-0.03em;margin-bottom:24px;animation:fadeUp .8s ease .1s both}
+  .hero h1 em{font-style:normal;color:var(--blue)}
+  .hero-sub{font-size:clamp(15px,1.6vw,18px);color:var(--gray-light);max-width:520px;margin:0 0 48px;line-height:1.75;font-weight:300;animation:fadeUp .8s ease .2s both}
+  .hero-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px;animation:fadeUp .8s ease .3s both}
+  .hero-disclaimer{font-size:13px;color:var(--gray);letter-spacing:.01em}
+  .hero-disclaimer::before{content:'';display:inline-block;width:6px;height:6px;background:#22c55e;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+  /* BTN */
+  .btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--blue);color:#fff;padding:16px 36px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;text-decoration:none;letter-spacing:.01em;transition:all .25s ease;box-shadow:0 0 40px rgba(0,153,255,0.35);border:none;cursor:none}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 50px rgba(0,153,255,0.5);background:#1aa3ff}
+  .btn-primary svg{transition:transform .2s}
+  .btn-primary:hover svg{transform:translateX(4px)}
+
+  /* ── EAGLE ── */
+  .hero-eagle{position:relative;display:flex;align-items:center;justify-content:center;animation:fadeUp 1s ease .4s both}
+  .eagle-scene{position:relative;width:440px;height:440px;display:flex;align-items:center;justify-content:center}
+  .eagle-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,153,255,0.1);animation:ringPulse 4s ease-in-out infinite}
+  .eagle-ring:nth-child(1){width:410px;height:410px;animation-delay:0s}
+  .eagle-ring:nth-child(2){width:340px;height:340px;animation-delay:.7s;border-color:rgba(0,153,255,0.16)}
+  .eagle-ring:nth-child(3){width:270px;height:270px;animation-delay:1.4s;border-color:rgba(0,153,255,0.1)}
+  @keyframes ringPulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:1;transform:scale(1.015)}}
+  .eagle-glow{position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,153,255,0.22) 0%,transparent 68%);filter:blur(30px);animation:glowPulse 5s ease-in-out infinite}
+  @keyframes glowPulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+  .eagle-svg-wrap{position:relative;z-index:2;animation:eagleFloat 7s ease-in-out infinite}
+  @keyframes eagleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  /* SCROLL HINT */
+  .scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gray);font-size:11px;letter-spacing:.1em;text-transform:uppercase;animation:fadeUp 1s ease .6s both;z-index:1}
+  .scroll-line{width:1px;height:50px;background:linear-gradient(180deg,transparent,var(--blue));animation:scrollLine 2s ease-in-out infinite}
+  @keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  /* SHARED */
+  section{position:relative;padding:120px 60px;z-index:1}
+  .section-label{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+  .section-title{font-size:clamp(28px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing:-0.025em;margin-bottom:20px}
+  .section-sub{font-size:18px;color:var(--gray-light);max-width:560px;line-height:1.7;font-weight:300}
+  .container{max-width:1100px;margin:0 auto}
+
+  /* ── PROBLEM ── */
+  .problem{background:var(--surface)}
+  .problem-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .problem-visual{display:flex;align-items:center;justify-content:center}
+  .problem-chart{width:100%;max-width:400px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:28px 28px 24px;overflow:hidden}
+  .chart-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .chart-icon{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .chart-label-txt{font-size:11px;color:var(--gray);letter-spacing:.06em;text-transform:uppercase}
+  /* THE BARS */
+  .chart-bars{display:flex;align-items:flex-end;gap:8px;height:140px;padding-bottom:0}
+  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end}
+  .bar-inner{width:100%;border-radius:4px 4px 0 0;transform-origin:bottom;transform:scaleY(0);transition:transform 1s cubic-bezier(.22,1,.36,1)}
+  .bar-inner.animated{transform:scaleY(1)}
+  .bar-wrap:nth-child(1) .bar-inner{height:28%;background:rgba(0,153,255,0.35)}
+  .bar-wrap:nth-child(2) .bar-inner{height:44%;background:rgba(0,153,255,0.42)}
+  .bar-wrap:nth-child(3) .bar-inner{height:22%;background:rgba(0,153,255,0.35)}
+  .bar-wrap:nth-child(4) .bar-inner{height:58%;background:rgba(0,153,255,0.48)}
+  .bar-wrap:nth-child(5) .bar-inner{height:36%;background:rgba(0,153,255,0.38)}
+  .bar-wrap:nth-child(6) .bar-inner{height:92%;background:linear-gradient(180deg,#55ccff 0%,#0077dd 100%);box-shadow:0 0 16px rgba(0,153,255,0.55)}
+  .chart-x{display:flex;gap:8px;margin-top:6px}
+  .chart-x span{flex:1;text-align:center;font-size:10px;color:var(--gray)}
+  .chart-divider{height:1px;background:var(--border);margin:14px 0}
+  .chart-note{font-size:13px;color:var(--gray)}
+  .chart-note strong{color:#fff}
+  .problem-tag{display:inline-block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#f87171;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600;margin-bottom:16px;letter-spacing:.05em;text-transform:uppercase}
+  .problem-text p{color:var(--gray-light);font-size:17px;line-height:1.8;margin-bottom:20px;font-weight:300}
+  .problem-text p strong{color:#fff;font-weight:500}
+  .problem-conclusion{background:var(--blue-dim);border:1px solid rgba(0,153,255,0.2);border-radius:10px;padding:20px 24px;margin-top:12px;font-size:15px;color:#fff;line-height:1.7}
+
+  /* ── SOLUTION ── */
+  .solution{background:var(--black)}
+  .solution-header{text-align:center;margin-bottom:72px}
+  .solution-header .section-sub{margin:0 auto}
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 32px;transition:border-color .3s,transform .3s,box-shadow .3s;position:relative;overflow:hidden;z-index:1}
+  .pillar::before{content:'';position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 0% 0%,rgba(0,153,255,0.08),transparent 60%);transition:opacity .3s}
+  .pillar:hover{border-color:rgba(0,153,255,0.35);transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,153,255,0.1)}
+  .pillar:hover::before{opacity:1}
+  .pillar-icon{width:52px;height:52px;background:var(--blue-dim);border:1px solid rgba(0,153,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:24px}
+  .pillar h3{font-size:20px;font-weight:700;margin-bottom:14px}
+  .pillar p{color:var(--gray-light);font-size:15px;line-height:1.75;font-weight:300}
+
+  /* ── PROCESS ── */
+  .process{background:var(--surface)}
+  .process-header{text-align:center;margin-bottom:80px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+  .steps::before{content:'';position:absolute;top:32px;left:calc(16.66% + 10px);right:calc(16.66% + 10px);height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+  .step{padding:0 32px;text-align:center}
+  .step-number{width:64px;height:64px;border-radius:50%;background:var(--black);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;color:var(--blue);font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;position:relative;z-index:1;box-shadow:0 0 24px rgba(0,153,255,0.25)}
+  .step-title{font-size:20px;font-weight:700;margin-bottom:14px}
+  .step-desc{color:var(--gray-light);font-size:15px;line-height:1.75;font-weight:300}
+
+  /* ── PROOF ── */
+  .proof{background:var(--black)}
+  .proof-header{text-align:center;margin-bottom:72px}
+  .testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .testimonial{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;transition:border-color .3s,transform .3s;position:relative;z-index:1}
+  .testimonial:hover{border-color:rgba(0,153,255,0.3);transform:translateY(-4px)}
+  .testimonial-stars{color:var(--blue);font-size:16px;margin-bottom:20px;letter-spacing:2px}
+  .testimonial-text{color:var(--gray-light);font-size:15px;line-height:1.8;margin-bottom:24px;font-weight:300;font-style:italic}
+  .testimonial-author{display:flex;align-items:center;gap:14px}
+  .author-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#003366);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px}
+  .author-info strong{display:block;font-size:14px;font-weight:600}
+  .author-info span{font-size:13px;color:var(--gray)}
+
+  /* STATS WITH COUNT-UP */
+  .proof-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:56px;position:relative;z-index:1}
+  .stat{background:var(--surface);padding:40px;text-align:center}
+  .stat-number{font-family:'Montserrat',sans-serif;font-size:52px;font-weight:800;color:var(--blue);line-height:1;margin-bottom:10px;letter-spacing:-0.03em}
+  .stat-label{color:var(--gray-light);font-size:15px;font-weight:300}
+
+  /* ── FAQ ── */
+  .faq{background:var(--surface)}
+  .faq-header{text-align:center;margin-bottom:64px}
+  .faq-list{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:2px}
+  .faq-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
+  .faq-item.open{border-color:rgba(0,153,255,0.3)}
+  .faq-question{display:flex;align-items:center;justify-content:space-between;padding:22px 28px;cursor:none;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:600;transition:color .2s}
+  .faq-item.open .faq-question{color:var(--blue)}
+  .faq-icon{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;color:var(--gray)}
+  .faq-item.open .faq-icon{background:var(--blue);border-color:var(--blue);color:#fff;transform:rotate(45deg)}
+  .faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq-item.open .faq-answer{max-height:200px}
+  .faq-answer-inner{padding:0 28px 24px;color:var(--gray-light);font-size:15px;line-height:1.8;font-weight:300}
+
+  /* ── CTA FINAL ── */
+  .cta-final{background:var(--black);padding:140px 60px;text-align:center;overflow:hidden}
+  .cta-final-content{position:relative;z-index:1;max-width:720px;margin:0 auto}
+  .cta-final h2{font-size:clamp(30px,4.5vw,58px);font-weight:800;line-height:1.1;letter-spacing:-0.025em;margin-bottom:24px}
+  .cta-final p{color:var(--gray-light);font-size:18px;line-height:1.7;margin-bottom:48px;font-weight:300}
+  .cta-final .btn-primary{font-size:17px;padding:18px 44px}
+
+  /* ── FOOTER ── */
+  footer{background:var(--surface);border-top:1px solid var(--border);padding:48px 60px;display:flex;align-items:center;justify-content:space-between}
+  .footer-logo{display:flex;align-items:center;height:36px}
+  .footer-logo img{height:32px;width:auto;display:block;object-fit:contain}
+  .footer-links{display:flex;gap:32px}
+  .footer-links a{color:var(--gray);font-size:13px;text-decoration:none;transition:color .2s}
+  .footer-links a:hover{color:#fff}
+  footer p{color:var(--gray);font-size:13px}
+
+  /* ANIMATIONS */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav{padding:18px 24px}.nav-links{display:none}
+    section{padding:80px 24px}.hero{padding:120px 24px 80px}
+    .hero-inner{grid-template-columns:1fr;gap:48px}.hero-content{text-align:center}
+    .hero-actions{align-items:center}.hero-sub{margin:0 auto 48px}
+    .eagle-scene{width:280px;height:280px}
+    .eagle-ring:nth-child(1){width:260px;height:260px}
+    .eagle-ring:nth-child(2){width:210px;height:210px}
+    .eagle-ring:nth-child(3){width:170px;height:170px}
+    .problem-inner{grid-template-columns:1fr;gap:48px}
+    .pillars,.testimonials{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr;gap:48px}.steps::before{display:none}
+    .proof-stats{grid-template-columns:1fr}
+    footer{flex-direction:column;gap:24px;text-align:center}
+    .cta-final{padding:80px 24px}
+    body{cursor:auto}.cursor,.cursor-ring{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor"><div class="cursor-dot"></div></div>
+<div class="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">
+    <img src="liberte_logoo.png" alt="Liberté" onerror="this.onerror=null;this.src='/mnt/user-data/uploads/liberte_logoo.png'">
+  </div>
+  <ul class="nav-links">
+    <li><a href="#problema">O problema</a></li>
+    <li><a href="#solucao">Solução</a></li>
+    <li><a href="#processo">Processo</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Falar com estrategista</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas class="stars-canvas" id="starsHero"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+
+    <div class="hero-content">
+      <div class="hero-badge"><span></span> Agência de performance digital</div>
+      <h1><em>Liberte</em> a sua agência<br>de marketing digital.</h1>
+      <p class="hero-sub">Nós implementamos estratégias de marketing digital e posicionamento inteligente que transformam as suas redes sociais em uma máquina previsível de atração de clientes.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-primary">
+          Quero escalar minhas vendas
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <span class="hero-disclaimer">Fale direto com um estrategista, sem compromisso.</span>
+      </div>
+    </div>
+
+    <!-- EAGLE -->
+    <div class="hero-eagle">
+      <div class="eagle-scene">
+        <div class="eagle-ring"></div>
+        <div class="eagle-ring"></div>
+        <div class="eagle-ring"></div>
+        <div class="eagle-glow"></div>
+        <div class="eagle-svg-wrap">
+          <!-- Glowing planet with orbital rings and satellite -->
+          <svg width="380" height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Core planet glow -->
+              <radialGradient id="planetCore" cx="42%" cy="36%" r="60%">
+                <stop offset="0%"  stop-color="#55ccff" stop-opacity="1"/>
+                <stop offset="25%" stop-color="#0099ff" stop-opacity="1"/>
+                <stop offset="60%" stop-color="#0044bb" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#001030" stop-opacity="1"/>
+              </radialGradient>
+              <!-- Outer atmosphere bloom -->
+              <radialGradient id="atmoGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"  stop-color="#0099ff" stop-opacity="0.35"/>
+                <stop offset="50%" stop-color="#0066cc" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="#0033aa" stop-opacity="0"/>
+              </radialGradient>
+              <!-- Wide halo -->
+              <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"  stop-color="#0099ff" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#0099ff" stop-opacity="0"/>
+              </radialGradient>
+              <!-- Specular highlight -->
+              <radialGradient id="specular" cx="35%" cy="28%" r="45%">
+                <stop offset="0%"  stop-color="#aaeeff" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#0099ff" stop-opacity="0"/>
+              </radialGradient>
+              <!-- Glow filter for everything -->
+              <filter id="bigGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="18" result="b1"/>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/>
+                <feMerge>
+                  <feMergeNode in="b1"/>
+                  <feMergeNode in="b2"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <filter id="orbitGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="2.5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="dotGlow" x="-200%" y="-200%" width="500%" height="500%">
+                <feGaussianBlur stdDeviation="5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- ── WIDE HALO (outermost soft bloom) ── -->
+            <circle cx="190" cy="190" r="175" fill="url(#haloGrad)"/>
+
+            <!-- ── ORBITAL GRID RINGS (like reference image) ── -->
+            <!-- Faint grid/orbit lines -->
+            <circle cx="190" cy="190" r="162" fill="none" stroke="#0099ff" stroke-width="0.6" opacity="0.18" filter="url(#orbitGlow)"/>
+            <circle cx="190" cy="190" r="148" fill="none" stroke="#0099ff" stroke-width="0.5" opacity="0.14"/>
+            <circle cx="190" cy="190" r="134" fill="none" stroke="#0099ff" stroke-width="0.5" opacity="0.12"/>
+            <circle cx="190" cy="190" r="120" fill="none" stroke="#0099ff" stroke-width="0.5" opacity="0.1"/>
+
+            <!-- ── ATMOSPHERE BLOOM ── -->
+            <circle cx="190" cy="190" r="115" fill="url(#atmoGrad)" filter="url(#bigGlow)"/>
+
+            <!-- ── PLANET BODY ── -->
+            <circle cx="190" cy="190" r="100" fill="url(#planetCore)" filter="url(#bigGlow)"/>
+
+            <!-- ── SPECULAR HIGHLIGHT (top-left shine) ── -->
+            <circle cx="190" cy="190" r="100" fill="url(#specular)"/>
+
+            <!-- ── ORBITAL SATELLITE DOT (bright blue like reference) ── -->
+            <circle cx="310" cy="190" r="6" fill="#55ddff" filter="url(#dotGlow)" opacity="0.95"/>
+            <!-- tiny secondary dots scattered like stars near orbit -->
+            <circle cx="68"  cy="145" r="1.8" fill="#aaddff" opacity="0.6"/>
+            <circle cx="312" cy="135" r="1.4" fill="#aaddff" opacity="0.5"/>
+            <circle cx="290" cy="62"  r="1.2" fill="#aaddff" opacity="0.4"/>
+            <circle cx="95"  cy="290" r="1.5" fill="#aaddff" opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div></div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problem" id="problema">
+  <div class="container">
+    <div class="problem-inner">
+      <div class="problem-text reveal">
+        <div class="problem-tag">⚠ O problema</div>
+        <h2 class="section-title">A verdade que os "gurus" não te contam:</h2>
+        <p>Você gasta horas pensando no que postar. Grava vídeos, faz stories, segue todas as trends do momento e se esgota criando conteúdo... mas no final do mês, o <strong>faturamento não acompanha o seu esforço.</strong></p>
+        <div class="problem-conclusion">
+          O problema não é o seu produto ou o seu serviço. O problema é que a sua comunicação não está preparada para converter curiosos em compradores. <strong>É aqui que nós entramos.</strong>
+        </div>
+      </div>
+      <div class="problem-visual reveal">
+        <div class="problem-chart">
+          <div class="chart-header">
+            <div class="chart-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <span class="chart-label-txt">Esforço vs. resultado — Sem estratégia</span>
+          </div>
+          <div class="chart-bars" id="chartBars">
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+            <div class="bar-wrap"><div class="bar-inner"></div></div>
+          </div>
+          <div class="chart-x">
+            <span>Mês 1</span><span>Mês 2</span><span>Mês 3</span><span>Mês 4</span><span>Mês 5</span><span>Mês 6</span>
+          </div>
+          <div class="chart-divider"></div>
+          <div class="chart-note">Mês 6 com <strong>estratégia profissional →</strong> +80% de resultado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="solution" id="solucao">
+  <canvas class="stars-canvas" id="starsSolution"></canvas>
+  <div class="container">
+    <div class="solution-header reveal">
+      <span class="section-label">Nossa metodologia</span>
+      <h2 class="section-title">Como transformamos o seu<br>negócio no digital:</h2>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="pillar-icon">🎯</div>
+        <h3>Posicionamento magnético</h3>
+        <p>Criamos uma identidade visual e editorial que destaca a sua marca da concorrência e atrai o público que realmente quer e pode pagar pelo que você vende.</p>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.1s">
+        <div class="pillar-icon">🚀</div>
+        <h3>Tráfego que converte</h3>
+        <p>Chega de impulsionar posts no escuro. Criamos campanhas de anúncios otimizadas para colocar a sua oferta na frente da pessoa certa, na hora certa.</p>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.2s">
+        <div class="pillar-icon">💡</div>
+        <h3>Inteligência e inovação</h3>
+        <p>Utilizamos ferramentas de ponta para otimizar desde a criação de conteúdo até o design visual das suas campanhas, garantindo velocidade e alta performance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSO -->
+<section class="process" id="processo">
+  <div class="container">
+    <div class="process-header reveal">
+      <span class="section-label">Como funciona</span>
+      <h2 class="section-title">O seu caminho até o topo<br>em 3 passos simples:</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">01</div>
+        <h3 class="step-title">O diagnóstico</h3>
+        <p class="step-desc">Mergulhamos no seu negócio para entender seu público, seus gargalos e mapear as oportunidades ocultas.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.15s">
+        <div class="step-number">02</div>
+        <h3 class="step-title">O plano de ação</h3>
+        <p class="step-desc">Desenhamos uma estratégia sob medida (conteúdo + anúncios + vendas) focada nas suas metas de faturamento.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.3s">
+        <div class="step-number">03</div>
+        <h3 class="step-title">A execução de elite</h3>
+        <p class="step-desc">Nossa equipe assume o controle. Você foca em atender os clientes que vão chegar, e nós focamos em trazer cada vez mais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="proof">
+  <canvas class="stars-canvas" id="starsProof"></canvas>
+  <div class="container">
+    <div class="proof-header reveal">
+      <span class="section-label">Prova social</span>
+      <h2 class="section-title">Resultados de quem já<br>confiou na nossa estratégia:</h2>
+    </div>
+    <div class="testimonials">
+      <div class="testimonial reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Em 6 semanas a nossa agenda ficou totalmente lotada. Nunca tínhamos tido tanto retorno de campanhas digitais. A estratégia deles é completamente diferente do que eu já vi."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">M</div>
+          <div class="author-info"><strong>Mariana Costa</strong><span>Clínica de Estética</span></div>
+        </div>
+      </div>
+      <div class="testimonial reveal" style="transition-delay:.1s">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Triplicamos as vendas no e-commerce em 3 meses. O trabalho de posicionamento foi cirúrgico. Eles realmente entenderam o meu público e criaram campanhas que convertem de verdade."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">R</div>
+          <div class="author-info"><strong>Rafael Mendes</strong><span>E-commerce de Moda</span></div>
+        </div>
+      </div>
+      <div class="testimonial reveal" style="transition-delay:.2s">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Eu tentei várias agências antes. Nenhuma entregou o que a Liberté entregou. Os leads são qualificados, os anúncios convertem e o suporte é impecável. Vale cada centavo."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">C</div>
+          <div class="author-info"><strong>Camila Rodrigues</strong><span>Consultora Financeira</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS: count-up on scroll -->
+    <div class="proof-stats reveal" id="proofStats">
+      <div class="stat">
+        <div class="stat-number" data-target="3" data-suffix="x" data-decimals="0">0x</div>
+        <div class="stat-label">Crescimento médio de faturamento dos nossos clientes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" data-target="200" data-prefix="+" data-suffix="" data-decimals="0">+0</div>
+        <div class="stat-label">Negócios escalados com nossas estratégias</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" data-target="97" data-suffix="%" data-decimals="0">0%</div>
+        <div class="stat-label">Taxa de satisfação e retenção de clientes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-header reveal">
+      <span class="section-label">FAQ</span>
+      <h2 class="section-title">Ainda com dúvidas?</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Isso funciona para o meu nicho?
+          <div class="faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner">Sim. Os princípios de persuasão, tráfego e bom posicionamento funcionam tanto para produtos físicos, quanto para profissionais liberais (como médicos e advogados) ou serviços de alto valor. Nós adaptamos a estratégia à sua realidade.</div></div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.1s">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Em quanto tempo vejo resultados?
+          <div class="faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner">O marketing digital não é mágica, é processo. Nossos clientes costumam notar um aumento no engajamento qualificado e no volume de leads já nas primeiras semanas de campanha ativa.</div></div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.2s">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Vou precisar gravar vídeos todos os dias?
+          <div class="faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+        <div class="faq-answer"><div class="faq-answer-inner">Não! Nossa metodologia foca em trabalhar de forma inteligente. Vamos mapear o formato de conteúdo que você tem mais facilidade de produzir e que gera mais resultado.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final" id="cta">
+  <canvas class="stars-canvas" id="starsCta"></canvas>
+  <div class="cta-final-content reveal">
+    <h2>O seu concorrente já está roubando a atenção (e o dinheiro) do seu cliente. Você vai deixar?</h2>
+    <p>A internet está cada vez mais concorrida. Quem tem a melhor estratégia domina o mercado. Clique no botão abaixo e agende um bate-papo com a nossa equipe para descobrirmos como escalar o seu negócio.</p>
+    <a href="https://wa.me/5583921520813" class="btn-primary" target="_blank">
+      Agendar minha sessão estratégica agora
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="liberte_logoo.png" alt="Liberté" onerror="this.onerror=null;this.src='/mnt/user-data/uploads/liberte_logoo.png'">
+  </div>
+  <div class="footer-links">
+    <a href="#">Política de privacidade</a>
+    <a href="#">Termos de uso</a>
+    <a href="#">Contato</a>
+  </div>
+  <p>© 2025 Liberté. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const dot = document.querySelector('.cursor-dot');
+const ring = document.querySelector('.cursor-ring');
+document.addEventListener('mousemove', e => {
+  dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px';
+  ring.style.left = e.clientX+'px'; ring.style.top = e.clientY+'px';
+});
+
+/* ── NAV ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+/* ── REVEAL ── */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.12});
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ── CHART BARS: animate when visible ── */
+const barsEl = document.getElementById('chartBars');
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const bars = barsEl.querySelectorAll('.bar-inner');
+      bars.forEach((b, i) => {
+        setTimeout(() => b.classList.add('animated'), i * 120 + 100);
+      });
+      barObs.disconnect();
+    }
+  });
+}, {threshold: 0.3});
+barObs.observe(barsEl);
+
+/* ── COUNT-UP ANIMATION ── */
+function countUp(el) {
+  const target  = parseFloat(el.dataset.target);
+  const prefix  = el.dataset.prefix  || '';
+  const suffix  = el.dataset.suffix  || '';
+  const decimals = parseInt(el.dataset.decimals) || 0;
+  const duration = 1800;
+  const start = performance.now();
+
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const value = (target * ease).toFixed(decimals);
+    el.textContent = prefix + value + suffix;
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const statsEl = document.getElementById('proofStats');
+let statsDone = false;
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting && !statsDone) {
+      statsDone = true;
+      statsEl.querySelectorAll('.stat-number[data-target]').forEach(el => countUp(el));
+      statsObs.disconnect();
+    }
+  });
+}, {threshold: 0.4});
+statsObs.observe(statsEl);
+
+/* ── FAQ ── */
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!open) item.classList.add('open');
+}
+
+/* ── STARFIELD ── */
+function initStars(id, n=130) {
+  const c = document.getElementById(id);
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    c.width  = c.parentElement.offsetWidth;
+    c.height = c.parentElement.offsetHeight;
+  }
+  function spawn() {
+    stars = [];
+    for(let i=0;i<n;i++) stars.push({
+      x: Math.random()*c.width,
+      y: Math.random()*c.height,
+      r: Math.random()*1.4+0.1,
+      vy: Math.random()*0.13+0.025,
+      base: Math.random()*0.5+0.08,
+      ts: Math.random()*0.004+0.001,
+      to: Math.random()*Math.PI*2
+    });
+  }
+  function draw(t) {
+    ctx.clearRect(0,0,c.width,c.height);
+    for(const s of stars) {
+      s.y += s.vy;
+      if(s.y > c.height) { s.y = -2; s.x = Math.random()*c.width; }
+      const a = s.base*(0.5 + 0.5*Math.sin(t*0.001*s.ts*800+s.to));
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  resize(); spawn(); requestAnimationFrame(draw);
+  new ResizeObserver(()=>{ resize(); spawn(); }).observe(c.parentElement);
+}
+
+['starsHero','starsSolution','starsProof','starsCta'].forEach(id => initStars(id));
+</script>
+</body>
+</html>
